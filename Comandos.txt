@@ -1,0 +1,70 @@
+Mkdisk -size=300 -unit=K -path=/home/jenny/Disco1.dsk
+Mkdisk -path=/home/jenny/Disco2.dsk -unit=K -size=500
+
+rmdisk -path=/home/jenny/Disco1.dsk
+rmdisk -path=/home/jenny/Disco2.dsk
+
+fdisk -Size=30 -path=/home/jenny/Disco1.dsk -name=Particion1 -type=E
+fdisk -Size=10 -path=/home/jenny/Disco1.dsk -name=Particion2 -type=E
+fdisk -Size=10 -path=/home/jenny/Disco1.dsk -name=Particion3 -type=E
+fdisk -Size=10 -path=/home/jenny/Disco1.dsk -name=Particion4 -type=E
+
+else if(strcmp(partt->tipo,"l")== 0){
+                                fseek(archivo_disco,0,SEEK_SET);
+                                fread(lectura_mbr,sizeof(MBR),1,archivo_disco);
+                                //verificar si existe extendida
+                                if(extendida!=0){
+                                    int inicioEBR;
+                                    //buscar la posicion del primer ebr en particion extendida
+                                    switch(extendida){
+                                        case 0:
+                                            printf("No existe particion extendida\n");
+                                        break;
+                                        case 1:
+                                            printf("Particion extendida 1 %i\n",lectura_mbr->particion_1.inicio);
+                                            inicioEBR=lectura_mbr->particion_1.inicio;
+                                        break;
+                                        case 2:
+                                            printf("Particion extendida 2 %i\n",lectura_mbr->particion_2.inicio);
+                                            inicioEBR=lectura_mbr->particion_2.inicio;
+                                        break;
+                                        case 3:
+                                            printf("Particion extendida 3 %i\n",lectura_mbr->particion_3.inicio);
+                                            inicioEBR=lectura_mbr->particion_3.inicio;
+                                        break;
+                                        case 4:
+                                            printf("Particion extendida 4 %i\n",lectura_mbr->particion_4.inicio);
+                                            inicioEBR=lectura_mbr->particion_4.inicio;
+
+                                        break;
+                                    default:
+                                        break;
+                                    }
+
+                                    EBR *lectura_ebr;
+                                    fseek(archivo_disco,inicioEBR,SEEK_SET);
+                                    fread(lectura_ebr,sizeof(EBR),1,archivo_disco);
+                                    //ver si el primer ebr esta libre
+                                    bool logica=false;//verifica si se inserto logica
+                                    while(!logica){
+                                        if(lectura_ebr->siguiente!=-1){//existe un ebr siguiente
+                                            if(lectura_ebr->estado[0] == '0'){
+                                                EBR *nuevo_ebr;
+                                                nuevo_ebr->estado[0]='1';
+                                                strcpy(nuevo_ebr->ajuste,partt->ajuste);
+
+                                            }
+                                        }else{//solo existe un ebr
+                                            if(lectura_ebr->estado[0] == '0'){//se puede insertar
+                                            //verificar si hay espacio suficiente en particion extendida
+
+
+                                            }
+
+                                        }
+                                    }
+                                    fclose(archivo_disco);
+                                }else{
+                                    printf("No se puede crear particion logica porque no existe particion extencida en el disco\n");
+                                }
+                            }
